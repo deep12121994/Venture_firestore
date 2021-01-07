@@ -1,6 +1,7 @@
 const { collection } = require("../db");
 const db = require("../db");
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
+const OrderDetails = require("../model/orderDetails");
 
 //OrderDetails creation
 exports.orderDetails_Registration =async (req, res) => {
@@ -38,10 +39,59 @@ exports.orderDetails_Registration =async (req, res) => {
     };
 
     try{
-        const result = await db.collection("orderDetails").doc(today).set(fb_OrderDetails);
-        res.send('Record saved successfuly');
+        const result = await db.collection("orderDetails").doc().set(fb_OrderDetails);
+        res.send("Record saved successfuly");
     } catch(error) {
         res.status(400).send(error.message);
     }
 
+};
+
+//display ChequeList
+exports.orderDetails_List =  async(req,res) => {
+    const snapshot = await db.collection("orderDetails").get();
+    const orderDetailsArray = [];
+
+    if(snapshot.empty){
+        res.status(404).send("No orderdetails found");
+    } else{
+        snapshot.forEach(doc => {
+               const orderDetails_data = new OrderDetails(
+                doc.data().orderId,
+                doc.data().orderType,
+                doc.data().productName,
+                doc.data().brand,
+                doc.data().additionalInfo,
+                doc.data().taxInEx,
+                doc.data().quantity,
+                doc.data().price,
+                doc.data().additionalCharges,
+                doc.data().gstpercentage,
+                doc.data().gstamount,
+                doc.data().subTotal,
+                doc.data().totalAmount,
+                doc.data().discountPercentage,
+                doc.data().discountAmount,
+                doc.data().modifiedDate,
+                doc.data().createdBy
+            );
+            orderDetailsArray.push(orderDetails_data); 
+        })
+        res.send(orderDetailsArray);
+    }
+};
+
+//orderDetails Deletion
+exports.orderDetails_Remove = async(req, res) => {
+    try{
+        var orderDetails_query = db.collection("orderDetails").where('orderId','==',req.body.OrderId);
+        orderDetails_query.get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                doc.ref.delete();
+            });
+        });
+        res.send('Record deleted successfuly');
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
 };

@@ -1,14 +1,15 @@
 const { collection } = require("./../db");
 const db = require("./../db");
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
+const Orders = require("../model/order");
 
 
 //Order creation
 exports.order_Registration =async (req, res) => {
 
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yy = today.getFullYear().toString().substr(-2);
     var min = today.getMinutes();
     var sec = today.getSeconds();
@@ -41,12 +42,63 @@ exports.order_Registration =async (req, res) => {
     };
 
     try{
-        const result = await db.collection("orders").doc(today).set(fb_Order);
-        res.send('Record saved successfuly');
+        await db.collection("orders").doc().set(fb_Order);
+        res.send("Record saved successfuly'");
     } catch(error) {
         res.status(400).send(error.message);
     }
 
+};
+
+//display OrderList
+exports.order_List =  async(req,res) => {
+    const snapshot = await db.collection("orders").get();
+    const orderArray = [];
+
+    if(snapshot.empty){
+        res.status(404).send("No order found");
+    } else{
+        snapshot.forEach(doc => {
+            const order_data = new Orders(
+                doc.data().orderId,
+                doc.data().billNo,
+                doc.data().refOrderId,
+                doc.data().orderType,
+                doc.data().orderDate,
+                doc.data().modifiedDate,
+                doc.data().partyName,
+                doc.data().partyNo,
+                doc.data().gstNumber,
+                doc.data().mode,
+                doc.data().modeRef,
+                doc.data().totalQuantity,
+                doc.data().subTotal,
+                doc.data().totalTaxAmount,
+                doc.data().totalDiscountAmount,
+                doc.data().totalDiscountPercentage,
+                doc.data().totalAmount,
+                doc.data().receivedPaidAmount,
+                doc.data().balanceAmount,
+                doc.data().createdBy);
+            orderArray.push(order_data);
+        })
+        res.send(orderArray);
+    }
+};
+
+//order Deletion
+exports.order_Remove = async(req, res) => {
+    try{
+        var order_query = db.collection("orders").where('orderId','==',req.body.OrderId);
+        order_query.get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                doc.ref.delete();
+            });
+        });
+        res.send('Record deleted successfuly');
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
 };
 
 

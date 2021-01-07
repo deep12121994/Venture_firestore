@@ -1,13 +1,14 @@
 const { collection } = require("./../db");
 const db = require("./../db");
-const admin = require('firebase-admin');
+const admin = require("firebase-admin");
+const Parties = require("../model/parties");
 
-//product creation
+//party creation
 exports.parties_Registration =async (req, res) => {
 
     var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yy = today.getFullYear().toString().substr(-2);
     var min = today.getMinutes();
     var sec = today.getSeconds();
@@ -21,20 +22,20 @@ exports.parties_Registration =async (req, res) => {
     const doc = await partyRef.get();
     if (!doc.exists) {
         const fb_Party = {
-            partyName: req.body.PartyName,
-            phoneNo: req.body.PhoneNo,
-            emailId:req.body.EmailId,
-            gstNumber: req.body.GstNumber,
-            due: req.body.Due,
-            createdBy: req.body.CreatedBy,
-            modifiedBy: req.body.ModifiedBy,
-            createdDate: admin.firestore.Timestamp.fromDate(new Date()),
-            modifiedDate: admin.firestore.Timestamp.fromDate(new Date())
+            partyName : req.body.PartyName,
+            phoneNo : req.body.PhoneNo,
+            emailId :req.body.EmailId,
+            gstNumber : req.body.GstNumber,
+            due : req.body.Due,
+            createdBy : req.body.CreatedBy,
+            modifiedBy : req.body.ModifiedBy,
+            createdDate : admin.firestore.Timestamp.fromDate(new Date()),
+            modifiedDate : admin.firestore.Timestamp.fromDate(new Date())
         };
 
         try{
             const result = await db.collection("parties").doc(req.body.PartyName.toLowerCase()).set(fb_Party);
-            res.send('Record saved successfuly');
+            res.send("Record saved successfuly");
         } catch(error) {
             res.status(400).send(error.message);
         }
@@ -42,4 +43,31 @@ exports.parties_Registration =async (req, res) => {
         return res.status(400).json({ Product: "Party already exists" });  
     }
 
+};
+
+
+//display ChequeList
+exports.party_List =  async(req,res) => {
+    const snapshot = await db.collection("parties").get();
+    const partyArray = [];
+
+    if(snapshot.empty){
+        res.status(404).send("No party data found");
+    } else{
+        snapshot.forEach(doc => {
+               const party_data = new Parties(
+                doc.data().partyName,
+                doc.data().phoneNo,
+                doc.data().emailId,
+                doc.data().gstNumber,
+                doc.data().due,
+                doc.data().createdBy,
+                doc.data().modifiedBy,
+                doc.data().createdDate,
+                doc.data().modifiedDate
+            );
+            partyArray.push(party_data); 
+        })
+        res.send(partyArray);
+    }
 };

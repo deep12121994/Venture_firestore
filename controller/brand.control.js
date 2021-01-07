@@ -2,10 +2,10 @@ const { collection } = require("./../db");
 const db = require("./../db");
 
 
-// Brand creation
+//Brand creation
 exports.brand_Registration =async (req, res) => {
 
-    const brandRef = db.collection('brand').doc(req.body.BrandName.toLowerCase());
+    const brandRef = db.collection("brand").doc(req.body.BrandName.toLowerCase());
     const doc = await brandRef.get();
     if (!doc.exists) {
         const fb_Brand = {
@@ -14,7 +14,7 @@ exports.brand_Registration =async (req, res) => {
 
         try{
             const result = await db.collection("brand").doc(req.body.BrandName.toLowerCase()).set(fb_Brand);
-            res.send('Record saved successfuly');
+            res.send("Record saved successfuly");
         } catch(error) {
             res.status(400).send(error.message);
         }
@@ -25,22 +25,18 @@ exports.brand_Registration =async (req, res) => {
 
 };
 
-// Brand_list
+
+//display BrandList
 exports.brand_List =  async(req,res) => {
-    const snapshot = await db.collection("brands").get();
+    const doc = await db.collection("brand").get();
     const brandArray = [];
 
-    if(snapshot.empty){
-        res.status(404).send('No brand found');
-        console.log("Brand not found");
-    } else{
-        console.log("Brand found"+snapshot);
-        snapshot.forEach(doc => {
-                const brand = new Brand(
-                    doc.data().brandName,
-            );
-            brandArray.push(brand); 
-        })
+    if (doc.empty) {
+        res.status(404).send("No brandList found");
+    } else {
+        doc.forEach(doc => {
+            brandArray.push(doc.data().brandName);
+        });
         res.send(brandArray);
     }
 };

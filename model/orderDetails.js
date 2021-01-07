@@ -1,7 +1,7 @@
 const { get } = require("mongoose");
 
 class OrderDetails {
-    constructor(additionalCharges, additionalInfo, brand, createdBy, discountAmount, discountPercentage,modifiedDate, 
+    constructor(additionalCharges, additionalInfo, brand, createdBy, discountAmount, discountPercentage, gstpercentage, gstamount, modifiedDate, 
         orderId, orderType, price, productName, quantity, subTotal, taxInEx, totalAmount)
     {
     
