@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 const Products = require("../model/product");
 
 //product creation
-exports.product_Registration =async (req, res) => {
+exports.productRegistration =async (req, res) => {
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -49,7 +49,7 @@ exports.product_Registration =async (req, res) => {
 };
 
 //display productList
-exports.product_List =  async(req,res) => {
+exports.productList =  async(req,res) => {
     const snapshot = await db.collection("products").get();
     const productArray = [];
 
@@ -76,4 +76,39 @@ exports.product_List =  async(req,res) => {
         })
         res.send(productArray);
     }
+};
+
+//update product data
+exports.productDataUpdate = async(req,res) => {
+    try{            
+        const product_data = await db.collection("products").doc(req.body.ProductName.toLowerCase());
+        const result = await product_data.update({
+            itemLocation:req.body.ItemLocation,
+            salePrice: req.body.SalePrice,
+            saleTaxInEx: req.body.SaleTaxInEx,
+            purchasePrice: req.body.PurchasePrice,
+            purchaseTaxInEx: req.body.PurchaseTaxInEx,
+            gstpercentage: req.body.GstPercentage,
+            modifiedBy: req.body.ModifiedBy,
+            modifiedDate: admin.firestore.Timestamp.fromDate(new Date())
+        });
+        return res.send("Record successfuly updated");
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
+
+};
+
+//update product quantity
+exports.productQuantityUpdate = async(req,res) => {
+    try{            
+        const product_data = await db.collection("products").doc(req.body.ProductName.toLowerCase());
+        const result = await product_data.update({
+            qty: req.body.Qty
+        });
+        return res.send("Record successfuly updated");
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
+
 };

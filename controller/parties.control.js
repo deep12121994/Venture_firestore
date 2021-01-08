@@ -1,10 +1,9 @@
-const { collection } = require("./../db");
 const db = require("./../db");
 const admin = require("firebase-admin");
 const Parties = require("../model/parties");
 
 //party creation
-exports.parties_Registration =async (req, res) => {
+exports.partiesRegistration =async (req, res) => {
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -47,7 +46,7 @@ exports.parties_Registration =async (req, res) => {
 
 
 //display ChequeList
-exports.party_List =  async(req,res) => {
+exports.partyList =  async(req,res) => {
     const snapshot = await db.collection("parties").get();
     const partyArray = [];
 
@@ -70,4 +69,36 @@ exports.party_List =  async(req,res) => {
         })
         res.send(partyArray);
     }
+};
+
+//update party data
+exports.partyDataUpdate = async(req,res) => {
+    try{            
+        const party_data = await db.collection("parties").doc(req.body.PartyName.toLowerCase());
+        const result = await party_data.update({
+            phoneNo : req.body.PhoneNo,
+            emailId :req.body.EmailId,
+            gstNumber : req.body.GstNumber,
+            modifiedBy : req.body.ModifiedBy,
+            modifiedDate : admin.firestore.Timestamp.fromDate(new Date())
+        });
+        return res.send("Record successfuly updated");
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
+
+};
+
+//update party balance data
+exports.partyBalanceDataUpdate = async(req,res) => {
+    try{            
+        const party_data = await db.collection("parties").doc(req.body.PartyName.toLowerCase());
+        const result = await party_data.update({
+            due : req.body.Due
+        });
+        return res.send("Record successfuly updated");
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
+
 };

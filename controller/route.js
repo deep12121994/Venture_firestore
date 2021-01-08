@@ -1,57 +1,52 @@
 const express = require("express");
 const router = express.Router();
-const {brand_Registration, brand_List} = require("./brand.control");
-const {user_Registration, user_List, login, find_User, update_User, remove_User } = require("./users.control");
-const {cheque_Registration, cheque_List} = require("./cheque.control");
-const {product_Registration, product_List} = require("./products.control");
-const { order_Registration, order_List, order_Remove } = require("./orders.control");
-const {orderDetails_Registration, orderDetails_List, orderDetails_Remove} = require("./orderDetails.control");
-const {parties_Registration, party_List} = require("./parties.control");
-const {paymentMode_Registration, paymentMode_List} = require("./paymentMode.control");
+const {brandRegistration, brandList} = require("./brand.control");
+//const {userRegistration, userList} = require("./users.control");
+const {chequeRegistration, chequeList, chequeUpdate} = require("./cheque.control");
+const {productRegistration, productList, productDataUpdate, productQuantityUpdate} = require("./products.control");
+const {orderRegistration, orderList, orderRemove } = require("./orders.control");
+const {orderDetailsRegistration, orderDetailsList, orderDetailsRemove} = require("./orderDetails.control");
+const {partiesRegistration, partyList, partyDataUpdate, partyBalanceDataUpdate} = require("./parties.control");
+const {paymentModeRegistration, paymentModeList, paymentModeUpdate} = require("./paymentMode.control");
 
 
 //brand controller
-router.post("/brand/registration", brand_Registration);
-router.get("/brand/brand_list", brand_List);
+router.post("/brand/registration", brandRegistration);
+router.get("/brand/brandlist", brandList);
 
 //cheque controller
-router.post("/cheque/registration", cheque_Registration);
-router.get("/cheque/cheque_list", cheque_List);
+router.post("/cheque/registration", chequeRegistration);
+router.get("/cheque/chequelist", chequeList);
+router.post("/cheque/update", chequeUpdate);
 
-//users controller
-router.post("/user/registration", user_Registration);
-router.get("/user/user_list", user_List);
-router.post("/user/login", login);
-router.post("/user/find", find_User);
-router.post("/user/update", update_User);
-router.post("/user/remove", remove_User);
+
 
 //product controller
-router.post("/product/registration", product_Registration);
-router.get("/product/product_list", product_List);
-/*router.post("/product/find", find_Product);
-router.post("/product/update", update_Product);
-router.post("/product/remove", remove_Product);*/
+router.post("/product/registration", productRegistration);
+router.get("/product/productlist", productList);
+router.post("/product/update", productDataUpdate);
+router.post("/product/updatequantity", productQuantityUpdate);
+
 
 //order controller
-router.post("/order/createorder", order_Registration);
-router.post("/order/remove", order_Remove);
-router.get("/order/order_list", order_List);
-/*router.post("/order/find", find_Order);
-router.post("/order/update", update_Order);
-router.post("/order/orderdetails_registration", orderDetails_Registration);*/
+router.post("/order/createorder", orderRegistration);
+router.post("/order/remove", orderRemove);
+router.get("/order/orderlist", orderList);
 
 //orderDetails controller
-router.post("/orderdetails/registration", orderDetails_Registration);
-router.get("/orderdetails/orderdetails_List", orderDetails_List);
-router.post("/orderdetails/remove",orderDetails_Remove);
+router.post("/orderdetails/registration", orderDetailsRegistration);
+router.get("/orderdetails/orderdetailslist", orderDetailsList);
+router.post("/orderdetails/remove",orderDetailsRemove);
 
 //parties controller
-router.post("/party/registration", parties_Registration);
-router.get("/party/party_List", party_List);
+router.post("/party/registration", partiesRegistration);
+router.get("/party/partylist", partyList);
+router.post("/party/update", partyDataUpdate);
+router.post("/party/updatebsalance", partyBalanceDataUpdate);
 
 //paymentMode controller
-router.post("/paymentmode/registration", paymentMode_Registration);
-router.get("/paymentmode/paymentmode_List", paymentMode_List);
+router.post("/paymentmode/registration", paymentModeRegistration);
+router.get("/paymentmode/paymentmodeList", paymentModeList);
+router.post("/paymentmode/updatepayment", paymentModeUpdate);
 
 module.exports = router;

@@ -1,10 +1,9 @@
-const { collection } = require("../db");
 const db = require("../db");
 const admin = require("firebase-admin");
 const OrderDetails = require("../model/orderDetails");
 
 //OrderDetails creation
-exports.orderDetails_Registration =async (req, res) => {
+exports.orderDetailsRegistration =async (req, res) => {
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, '0');
@@ -48,7 +47,7 @@ exports.orderDetails_Registration =async (req, res) => {
 };
 
 //display ChequeList
-exports.orderDetails_List =  async(req,res) => {
+exports.orderDetailsList =  async(req,res) => {
     const snapshot = await db.collection("orderDetails").get();
     const orderDetailsArray = [];
 
@@ -82,7 +81,7 @@ exports.orderDetails_List =  async(req,res) => {
 };
 
 //orderDetails Deletion
-exports.orderDetails_Remove = async(req, res) => {
+exports.orderDetailsRemove = async(req, res) => {
     try{
         var orderDetails_query = db.collection("orderDetails").where('orderId','==',req.body.OrderId);
         orderDetails_query.get().then(function(querySnapshot) {

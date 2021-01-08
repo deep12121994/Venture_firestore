@@ -1,5 +1,6 @@
-const { collection } = require("./../db");
-const db = require("./../db")
+const db = require("./../db");
+const admin = require("firebase-admin");
+
 
 exports.user_Registration =async (req, res) => {
 

@@ -3,8 +3,8 @@ const admin = require("firebase-admin");
 const ChequeData = require("../model/cheque");
 
 
-//cheque creation
-exports.cheque_Registration =async (req, res) => {
+//create cheque 
+exports.chequeRegistration =async (req, res) => {
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -44,7 +44,7 @@ exports.cheque_Registration =async (req, res) => {
 };
 
 //display ChequeList
-exports.cheque_List =  async(req,res) => {
+exports.chequeList =  async(req,res) => {
     const snapshot = await db.collection("cheque").get();
     const chequeArray = [];
 
@@ -71,4 +71,21 @@ exports.cheque_List =  async(req,res) => {
         })
         res.send(chequeArray);
     }
+};
+
+//update cheque data
+exports.chequeUpdate = async(req,res) => {
+    try{            
+        const cheque_data = await db.collection("cheque").doc(req.body.ChequeId);
+        const result = await cheque_data.update({
+            status : req.body.Status,
+            modifiedBy : req.body.ModifiedBy,
+            paymentFromOrToRef : req.body.PaymentFromOrToRef,
+            modifiedDate : admin.firestore.Timestamp.fromDate(new Date())
+        });
+        return res.send("Record successfuly updated");
+    } catch(error) {
+        res.status(400).send(error.message);
+    }
+
 };

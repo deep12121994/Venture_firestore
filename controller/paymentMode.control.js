@@ -4,7 +4,7 @@ const admin = require("firebase-admin");
 const BankAccountData = require("../model/bankAccountData");
 
 //product creation
-exports.paymentMode_Registration =async (req, res) => {
+exports.paymentModeRegistration =async (req, res) => {
 
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -45,7 +45,7 @@ exports.paymentMode_Registration =async (req, res) => {
 };
 
 //display PaymentModeList
-exports.paymentMode_List =  async(req,res) => {
+exports.paymentModeList =  async(req,res) => {
     const snapshot = await db.collection("paymentMode").get();
     const paymentModeArray = [];
 
@@ -66,5 +66,18 @@ exports.paymentMode_List =  async(req,res) => {
             paymentModeArray.push(paymentMode_data); 
         })
         res.send(paymentModeArray);
+    }
+};
+
+//update bankdata
+exports.paymentModeUpdate = async(req,res) => {
+    try{            
+        const payment_data = db.collection("paymentMode").doc(req.body.DisplayName.toLowerCase());
+        const result = await payment_data.update({
+            amount : req.body.Amount
+        });
+        return res.send("Record successfuly updated");
+    } catch(error) {
+        res.status(400).send(error.message);
     }
 };

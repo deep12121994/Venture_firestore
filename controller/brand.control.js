@@ -3,7 +3,7 @@ const db = require("./../db");
 
 
 //Brand creation
-exports.brand_Registration =async (req, res) => {
+exports.brandRegistration =async (req, res) => {
 
     const brandRef = db.collection("brand").doc(req.body.BrandName.toLowerCase());
     const doc = await brandRef.get();
@@ -27,7 +27,7 @@ exports.brand_Registration =async (req, res) => {
 
 
 //display BrandList
-exports.brand_List =  async(req,res) => {
+exports.brandList =  async(req,res) => {
     const doc = await db.collection("brand").get();
     const brandArray = [];
 
